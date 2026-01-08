@@ -1,3 +1,5 @@
+# file name (targets.yml) should be same as group(targets) in the hosts.ini
+# folder name should be group_vars only
 app_path: /opt/app.py
 flask_bind_host: 0.0.0.0
 
