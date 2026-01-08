@@ -1,3 +1,7 @@
+#SPDX-License-Identifier: MIT-0
+---
+# ansible-galaxy init flask_web -> this will create file structure under role folder. inside flask_web folder->tasks folder->main.yml thi# is the file where we have to define our role. and then thi playbook.yml instead of tasks, we can define roles. then it wil automatic fe#tch this file
+# tasks file for flask_web
 - name: Install base dependencies (Python 3 toolchain)
   apt:
     name:

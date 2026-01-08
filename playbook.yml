@@ -3,10 +3,7 @@
   hosts: targets
   become: true
 
-  tasks:
-    - name: Deploy database bits
-    # import_tasks is static and preferred when structure is fixed
-      import_tasks: tasks/deploy_db.yml
-
-    - name: Deploy web app bits
-      import_tasks: tasks/deploy_web.yml
+  roles:
+    - python
+    - mysql_db
+    - flask_web
