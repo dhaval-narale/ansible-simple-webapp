@@ -1,0 +1,30 @@
+- name: Install base dependencies (Python 3 toolchain)
+  apt:
+    name:
+      - python3
+      - python3-pip
+      - python3-venv
+      - python3-setuptools
+      - build-essential
+    state: present
+
+- name: Install Python Flask dependencies
+  apt:
+    name:
+      - python3-flask
+      - python3-pymysql
+    state: present
+    update_cache: yes
+
+- name: Copy Source Code
+  copy:
+    src: app.py
+    dest: "{{ app_path }}"
+    mode: '0755'
+
+# NOTE: For learning purposes, keeping your simple nohup-based run:
+- name: Start web server (dev mode, simple)
+  shell: |
+    FLASK_APP="{{ app_path }}" nohup flask run --host={{ flask_bind_host }} >/var/log/flask.log 2>&1 &
+  args:
+    creates: /var/log/flask.log

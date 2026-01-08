@@ -1,80 +1,12 @@
 
-# playbook.yml
 - name: deploy a web application
   hosts: targets
   become: true
-  vars:
-    app_path: /opt/app.py
-    flask_bind_host: 0.0.0.0
-    db_name: employee_db
-    db_user: db_user
-    db_password: Passw0rd
+
   tasks:
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
+    - name: Deploy database bits
+    # import_tasks is static and preferred when structure is fixed
+      import_tasks: tasks/deploy_db.yml
 
-    - name: Install base dependencies (Python 3 toolchain)
-      apt:
-        name:
-          - python3
-          - python3-pip
-          - python3-venv
-          - python3-setuptools
-          - build-essential
-        state: present
-
-    - name: Install MySQL server and client
-      apt:
-        name:
-          - mysql-server
-          - mysql-client
-        state: present
-
-    - name: Ensure MySQL service is started and enabled
-      service:
-        name: mysql
-        state: started
-        enabled: yes
-
-    - name: Install Python MySQL driver via APT (PyMySQL)
-      apt:
-        name: python3-pymysql
-        state: present
-
-    - name: Create application database
-      community.mysql.mysql_db:
-        name: "{{ db_name }}"
-        state: present
-        login_unix_socket: /var/run/mysqld/mysqld.sock
-
-    - name: Create Database User
-      community.mysql.mysql_user:
-        name: "{{ db_user }}"
-        password: "{{ db_password }}"
-        priv: "*.*:ALL"
-        state: present
-        host: "%"
-        login_unix_socket: /var/run/mysqld/mysqld.sock
-
-    - name: Install Python Flask dependencies
-      become: true
-      apt:
-        name:
-          - python3-flask
-          - python3-pymysql
-        state: present
-        update_cache: yes
-
-    - name: Copy Source Code
-      copy:
-        src: app.py
-        dest: "{{ app_path }}"
-        mode: '0755'
-
-    - name: Start web server (dev mode, simple)
-      shell: |
-        FLASK_APP="{{ app_path }}" nohup flask run --host={{ flask_bind_host }} >/var/log/flask.log 2>&1 &
-      args:
-        creates: /var/log/flask.log
+    - name: Deploy web app bits
+      import_tasks: tasks/deploy_web.yml
